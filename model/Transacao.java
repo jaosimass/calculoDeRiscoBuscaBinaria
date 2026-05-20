@@ -1,5 +1,5 @@
 package model;
-projeto.projeto.model
+
     public class Transacao {
         private int id;
         private String tipo;
