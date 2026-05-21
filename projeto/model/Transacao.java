@@ -72,6 +72,6 @@ package model;
                     " | Horário: " + horario +
                     " | Destinatário: " + destinatario +
                     " | Cidade: " + cidade +
-                    " | Risco: " + String.format("%.2f", risco);
+                    " | Risco: " + String.format("%.0f", risco * 100) + "%";
         }
     }
