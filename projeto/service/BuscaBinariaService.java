@@ -1,4 +1,4 @@
-package projeto.service;
+package service;
 
 import model.Transacao;
 import java.util.ArrayList;

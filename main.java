@@ -1,40 +1,86 @@
-import java.util.List;
 import model.Transacao;
-import projeto.repository.HistoricoRepository;
-import projeto.service.BuscaBinariaService;
-import projeto.service.RiscoService;
+import service.BuscaBinariaService;
+import service.InputService;
+import service.RiscoService;
 
-public class main {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
-    public main(String[] args) {
-        
-        HistoricoRepository historicoRepository = new HistoricoRepository();
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        InputService inputService = new InputService();
         RiscoService riscoService = new RiscoService();
         BuscaBinariaService buscaBinariaService = new BuscaBinariaService();
 
+        List<Transacao> historico = new ArrayList<>();
+        List<Transacao> suspeitas = new ArrayList<>();
+
         double limiteRisco = 0.80;
+        int opcao;
 
-        List<Transacao> historico = historicoRepository.buscarHistorico();
+        do {
+            System.out.println("\n===== SISTEMA ANTIFRAUDE BANCÁRIA =====");
+            System.out.println("1 - Cadastrar transações");
+            System.out.println("2 - Analisar transações");
+            System.out.println("3 - Exibir histórico");
+            System.out.println("4 - Exibir transações suspeitas");
+            System.out.println("5 - Sair");
+            System.out.print("Escolha uma opção: ");
 
-        riscoService.calcularRiscos(historico);
+            opcao = scanner.nextInt();
+            scanner.nextLine();
 
-        List<Transacao> suspeitas = buscaBinariaService.buscarTransacoesSuspeitas(historico, limiteRisco);
+            switch (opcao) {
+                case 1:
+                    historico = inputService.lerTransacoes();
+                    System.out.println("\nTransações cadastradas com sucesso!");
+                    break;
 
-        System.out.println("===== HISTÓRICO ORDENADO POR RISCO =====");
+                case 2:
+                    if (historico.isEmpty()) {
+                        System.out.println("\nCadastre transações antes de analisar.");
+                    } else {
+                        riscoService.calcularRiscos(historico);
+                        suspeitas = buscaBinariaService.buscarTransacoesSuspeitas(historico, limiteRisco);
+                        System.out.println("\nAnálise concluída!");
+                    }
+                    break;
 
-        for (Transacao transacao : historico) {
-            System.out.println(transacao);
-        }
+                case 3:
+                    if (historico.isEmpty()) {
+                        System.out.println("\nNenhuma transação cadastrada.");
+                    } else {
+                        System.out.println("\n===== HISTÓRICO DE TRANSAÇÕES =====");
+                        for (Transacao transacao : historico) {
+                            System.out.println(transacao);
+                        }
+                    }
+                    break;
 
-        System.out.println();
-        System.out.println("===== TRANSAÇÕES SUSPEITAS =====");
+                case 4:
+                    if (suspeitas.isEmpty()) {
+                        System.out.println("\nNenhuma transação suspeita encontrada ou análise ainda não realizada.");
+                    } else {
+                        System.out.println("\n===== TRANSAÇÕES SUSPEITAS =====");
+                        for (Transacao transacao : suspeitas) {
+                            System.out.println(transacao);
+                        }
+                    }
+                    break;
 
-        if (suspeitas.isEmpty()) {
-            System.out.println("Nenhuma transação suspeita encontrada.");
-        } else {
-            for (Transacao transacao : suspeitas) {
-                System.out.println(transacao);
+                case 5:
+                    System.out.println("\nEncerrando o sistema...");
+                    break;
+
+                default:
+                    System.out.println("\nOpção inválida.");
             }
-        }
+
+        } while (opcao != 5);
+
+        scanner.close();
     }
 }
